@@ -1,0 +1,98 @@
+[
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_de9531f6",
+    "timestamp": "2026-03-03T14:07:24Z",
+    "basket_value_inr": 2271.68
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_ee8226c1",
+    "timestamp": "2026-03-03T14:09:55Z",
+    "basket_value_inr": 2035.99
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_e62b208a",
+    "timestamp": "2026-03-03T14:10:23Z",
+    "basket_value_inr": 1794.68
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_6381cae7",
+    "timestamp": "2026-03-03T14:10:32Z",
+    "basket_value_inr": 1899.41
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_ee3ace50",
+    "timestamp": "2026-03-03T14:15:15Z",
+    "basket_value_inr": 1516.9
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_a969057a",
+    "timestamp": "2026-03-03T14:16:26Z",
+    "basket_value_inr": 1053.29
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_e5f49c3b",
+    "timestamp": "2026-03-03T14:16:57Z",
+    "basket_value_inr": 1083.73
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_8568ec3f",
+    "timestamp": "2026-03-03T14:17:11Z",
+    "basket_value_inr": 2187.04
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_30cc4434",
+    "timestamp": "2026-03-03T14:18:06Z",
+    "basket_value_inr": 2905.87
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_b1f771fc",
+    "timestamp": "2026-03-03T14:18:32Z",
+    "basket_value_inr": 2594.44
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_0b066aa2",
+    "timestamp": "2026-03-03T14:19:43Z",
+    "basket_value_inr": 1818.27
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_5dbf77b3",
+    "timestamp": "2026-03-03T14:20:45Z",
+    "basket_value_inr": 2638.9
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_13acf4e7",
+    "timestamp": "2026-03-03T14:22:13Z",
+    "basket_value_inr": 384.51
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_8a431f13",
+    "timestamp": "2026-03-03T14:22:17Z",
+    "basket_value_inr": 1397.94
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_cf179d9f",
+    "timestamp": "2026-03-03T14:22:38Z",
+    "basket_value_inr": 1893.59
+  },
+  {
+    "store_id": "STORE_BLR_002",
+    "transaction_id": "TXN_1ae6b022",
+    "timestamp": "2026-03-03T14:25:43Z",
+    "basket_value_inr": 1046.21
+  }
+]

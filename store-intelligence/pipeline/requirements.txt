@@ -1,0 +1,7 @@
+# Detection pipeline dependencies (heavier than the API; run separately).
+# Install into a Python 3.11/3.12 environment:  pip install -r pipeline/requirements.txt
+ultralytics==8.3.58      # YOLOv8 detection + built-in ByteTrack tracking
+opencv-python-headless==4.11.0.86
+numpy==2.2.1
+# Optional: VLM-assisted staff classification (set ANTHROPIC_API_KEY to enable)
+anthropic==0.42.0

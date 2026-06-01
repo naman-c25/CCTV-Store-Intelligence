@@ -1,0 +1,39 @@
+# One command brings up the full Intelligence API + Postgres.
+#   docker compose up
+# The dashboard service is optional (Part E) and shares the same image.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: apex
+      POSTGRES_PASSWORD: apex
+      POSTGRES_DB: store_intel
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U apex -d store_intel"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      target: api
+    environment:
+      DATABASE_URL: postgresql+psycopg2://apex:apex@db:5432/store_intel
+      # If you mount the dataset, point this at the POS file to auto-load it.
+      POS_CSV: /data/pos_transactions.csv
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      # Mount the (git-ignored) dataset here so POS auto-loads. Optional.
+      - ./data:/data:ro
+
+volumes:
+  pgdata:

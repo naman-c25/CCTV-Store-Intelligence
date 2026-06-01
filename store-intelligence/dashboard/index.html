@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Apex Store Intelligence — Live</title>
+<style>
+  :root{
+    --bg:#0b0f17; --panel:#141b2b; --panel2:#1b2438; --line:#26314b;
+    --txt:#e8edf6; --muted:#8a98b5; --accent:#5b9dff; --good:#37d39b;
+    --warn:#ffb454; --crit:#ff5d6c; --ci:#2f3e63;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--txt)}
+  header{display:flex;align-items:center;gap:16px;padding:18px 26px;border-bottom:1px solid var(--line);
+         background:linear-gradient(90deg,#101727,#0b0f17)}
+  header h1{font-size:18px;margin:0;font-weight:650;letter-spacing:.2px}
+  header .sub{color:var(--muted);font-size:12px}
+  .live{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--good);box-shadow:0 0 0 0 rgba(55,211,155,.6);
+       animation:pulse 1.6s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(55,211,155,.5)}70%{box-shadow:0 0 0 9px rgba(55,211,155,0)}100%{box-shadow:0 0 0 0 rgba(55,211,155,0)}}
+  select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:8px;
+         padding:6px 10px;font-size:13px}
+  main{padding:22px 26px;max-width:1100px;margin:0 auto}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .card .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.6px}
+  .card .value{font-size:30px;font-weight:680;margin-top:6px;transition:color .3s}
+  .card .meta{color:var(--muted);font-size:12px;margin-top:4px}
+  .flash{color:var(--accent)!important}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px}
+  .panel h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:0 0 14px}
+  /* conversion + CI bar */
+  .cibar{position:relative;height:14px;background:var(--panel2);border-radius:8px;overflow:hidden;margin-top:10px}
+  .ci-range{position:absolute;top:0;bottom:0;background:var(--ci)}
+  .ci-point{position:absolute;top:-3px;width:3px;height:20px;background:var(--good);border-radius:2px}
+  /* funnel */
+  .stage{margin:10px 0}
+  .stage .top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
+  .bar{height:22px;background:var(--panel2);border-radius:7px;overflow:hidden}
+  .bar > div{height:100%;background:linear-gradient(90deg,#3a6fd8,#5b9dff);
+             border-radius:7px;transition:width .5s ease;display:flex;align-items:center;
+             padding-left:8px;font-size:12px;font-weight:600}
+  .drop{color:var(--warn);font-size:12px}
+  /* anomalies */
+  .anom{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;
+        background:var(--panel2);margin-bottom:8px;border-left:3px solid var(--muted)}
+  .anom.WARN{border-color:var(--warn)} .anom.CRITICAL{border-color:var(--crit)} .anom.INFO{border-color:var(--accent)}
+  .sev{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:#0c1322}
+  .sev.WARN{color:var(--warn)} .sev.CRITICAL{color:var(--crit)} .sev.INFO{color:var(--accent)}
+  .anom .act{color:var(--muted);font-size:12px;margin-top:3px}
+  .empty{color:var(--muted);font-style:italic}
+  .badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;margin-left:6px}
+  .HIGH{background:#10351f;color:var(--good)} .MEDIUM{background:#3a2f12;color:var(--warn)} .LOW{background:#3a1620;color:var(--crit)}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Apex Store Intelligence <span class="sub">· web-analytics for physical retail</span></h1>
+    <div class="sub" id="window">—</div>
+  </div>
+  <select id="store">
+    <option>STORE_BLR_002</option>
+    <option>STORE_BLR_001</option>
+    <option>STORE_DEL_001</option>
+    <option>STORE_MUM_001</option>
+    <option>STORE_HYD_001</option>
+  </select>
+  <div class="live"><span class="dot"></span><span id="status">connecting…</span></div>
+</header>
+
+<main>
+  <div class="grid">
+    <div class="card"><div class="label">Conversion rate</div>
+      <div class="value" id="conv">0.0%</div>
+      <div class="cibar"><div class="ci-range" id="cirange"></div><div class="ci-point" id="cipoint"></div></div>
+      <div class="meta" id="convmeta">—</div>
+    </div>
+    <div class="card"><div class="label">Unique visitors</div>
+      <div class="value" id="visitors">0</div><div class="meta" id="convd">today</div></div>
+    <div class="card"><div class="label">Queue depth</div>
+      <div class="value" id="queue">0</div><div class="meta">billing counter</div></div>
+    <div class="card"><div class="label">Revenue</div>
+      <div class="value" id="rev">₹0</div><div class="meta" id="abandon">abandonment 0%</div></div>
+  </div>
+
+  <div class="panel"><h2>Conversion funnel — Entry → Zone → Billing → Purchase</h2>
+    <div id="funnel"></div></div>
+
+  <div class="panel"><h2>Active anomalies</h2>
+    <div id="anoms"><div class="empty">No active anomalies.</div></div></div>
+</main>
+
+<script>
+let es;
+const $ = id => document.getElementById(id);
+
+function flash(el){ el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),350); }
+
+function render(d){
+  $('status').textContent = 'live';
+  $('window').textContent = d.window ? `window ${d.window.start.slice(0,10)}` : '';
+  const cr = d.conversion_rate || {value:0,ci_low:0,ci_high:0,data_confidence:'LOW'};
+  const pct = (cr.value*100).toFixed(1);
+  if($('conv').textContent !== pct+'%'){ $('conv').textContent = pct+'%'; flash($('conv')); }
+  $('convmeta').innerHTML = `95% CI ${(cr.ci_low*100).toFixed(1)}–${(cr.ci_high*100).toFixed(1)}%`
+      + ` <span class="badge ${cr.data_confidence}">${cr.data_confidence}</span>`;
+  $('cirange').style.left = (cr.ci_low*100)+'%';
+  $('cirange').style.width = ((cr.ci_high-cr.ci_low)*100)+'%';
+  $('cipoint').style.left = (cr.value*100)+'%';
+
+  setNum('visitors', d.unique_visitors);
+  $('convd').textContent = `${d.converted_visitors} converted`;
+  setNum('queue', d.queue_depth);
+  $('rev').textContent = '₹' + (d.revenue_inr||0).toLocaleString('en-IN');
+  $('abandon').textContent = `abandonment ${((d.abandonment_rate||0)*100).toFixed(0)}%`;
+
+  const fmax = (d.funnel && d.funnel[0] && d.funnel[0].count) || 1;
+  $('funnel').innerHTML = (d.funnel||[]).map(s=>{
+    const w = Math.max(2, (s.count / Math.max(1,fmax))*100);
+    const drop = s.drop_off_pct>0 ? `<span class="drop">▼ ${s.drop_off_pct}% drop</span>`:'';
+    return `<div class="stage"><div class="top"><span>${s.stage}</span><span>${s.count} ${drop}</span></div>
+            <div class="bar"><div style="width:${w}%">${s.count}</div></div></div>`;
+  }).join('');
+
+  const an = d.anomalies||[];
+  $('anoms').innerHTML = an.length ? an.map(a=>`
+     <div class="anom ${a.severity}"><span class="sev ${a.severity}">${a.severity}</span>
+       <div><div>${a.detail}</div><div class="act">→ ${a.suggested_action}</div></div></div>`).join('')
+     : '<div class="empty">No active anomalies.</div>';
+}
+function setNum(id,v){ const el=$(id); if(el.textContent!=String(v)){ el.textContent=v; flash(el);} }
+
+function connect(){
+  if(es) es.close();
+  const store = $('store').value;
+  es = new EventSource(`/stores/${store}/stream`);
+  es.onmessage = e => { try{ render(JSON.parse(e.data)); }catch(_){} };
+  es.onerror = () => { $('status').textContent='reconnecting…'; };
+}
+$('store').addEventListener('change', connect);
+connect();
+</script>
+</body>
+</html>

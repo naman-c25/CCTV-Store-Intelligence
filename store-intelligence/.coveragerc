@@ -1,0 +1,16 @@
+[run]
+source = app, pipeline
+omit =
+    # Integration entrypoints that require a GPU / video / network and are
+    # exercised manually against the dataset, not in unit tests.
+    pipeline/detect.py
+    pipeline/synth.py
+    pipeline/replay.py
+    tests/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    raise NotImplementedError
+    except ImportError

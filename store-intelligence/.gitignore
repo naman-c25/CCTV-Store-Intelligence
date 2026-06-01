@@ -1,0 +1,27 @@
+# --- Dataset / video files: MUST NOT be committed (per challenge rules) ---
+data/
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.jsonl
+*.zip
+store_layout.json
+pos_transactions.csv
+sample_events.jsonl
+!tests/**/*.jsonl
+
+# --- Python ---
+.venv/
+__pycache__/
+*.pyc
+*.db
+.coverage
+.pytest_cache/
+htmlcov/
+*.egg-info/
+
+# --- Local / IDE ---
+.env
+.DS_Store
+.vscode/
