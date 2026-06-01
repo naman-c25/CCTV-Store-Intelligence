@@ -1,0 +1,44 @@
+# Render Blueprint — one-click deploy of the Store Intelligence API + Postgres.
+#
+# Deploy:
+#   1. Push this repo (root = this folder) to GitHub.
+#   2. Render Dashboard -> New -> Blueprint -> pick the repo.
+#   3. Render reads this file, provisions the database, builds the Docker image,
+#      injects DATABASE_URL, and exposes the service. No manual env setup.
+#
+# Notes:
+#   - The web service builds from ./Dockerfile and listens on Render's $PORT.
+#   - DATABASE_URL is wired from the managed Postgres automatically.
+#   - The detection pipeline (heavy CV deps + clips) is NOT deployed here; it is
+#     a batch tool you run locally and POST events to this service's /events/ingest.
+#   - Free Postgres expires after ~30 days; bump the plans for anything lasting.
+
+databases:
+  - name: store-intel-db
+    plan: free
+    databaseName: store_intel
+    user: apex
+
+services:
+  - type: web
+    name: store-intelligence-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    # Bind uvicorn to the port Render assigns (overrides the Dockerfile CMD).
+    dockerCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: store-intel-db
+          property: connectionString
+      - key: BUSINESS_TZ_OFFSET_HOURS
+        value: "5.5"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      # Optional: set in the Render dashboard to enable VLM staff classification.
+      # - key: ANTHROPIC_API_KEY
+      #   sync: false

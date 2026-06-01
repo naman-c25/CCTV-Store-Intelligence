@@ -16,8 +16,9 @@ COPY dashboard ./dashboard
 
 EXPOSE 8000
 
-# Healthcheck mirrors the on-call check.
+# Healthcheck mirrors the on-call check. Honors $PORT (Render) but defaults to
+# 8000 for local docker-compose.
 HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
-    CMD python -c "import urllib.request,sys; urllib.request.urlopen('http://localhost:8000/health'); sys.exit(0)" || exit 1
+    CMD python -c "import os,urllib.request,sys; urllib.request.urlopen('http://localhost:%s/health' % os.getenv('PORT','8000')); sys.exit(0)" || exit 1
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

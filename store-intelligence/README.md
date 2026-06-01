@@ -97,6 +97,21 @@ in `app/models.py`). Self-evaluation: `python pipeline/calibrate.py --events
 http://localhost:8000/dashboard
 ```
 
+## Deploy to Render (Blueprint)
+
+This repo ships a [render.yaml](render.yaml) Blueprint that provisions the API +
+a managed Postgres in one step:
+
+1. Push this folder (as the repo root) to GitHub.
+2. Render Dashboard → **New → Blueprint** → select the repo.
+3. Render reads `render.yaml`, creates the database, builds `./Dockerfile`,
+   injects `DATABASE_URL`, and serves the API on its `$PORT`. Health check at
+   `/health`; dashboard at `https://<your-service>.onrender.com/dashboard`.
+
+No manual env setup is required. (Optionally set `ANTHROPIC_API_KEY` in the
+dashboard to enable VLM staff classification.) The detection pipeline is a local
+batch tool — run it locally and POST events to the deployed `/events/ingest`.
+
 ## Configuration
 
 The app runs with sensible defaults and **needs no env setup**. Every tunable

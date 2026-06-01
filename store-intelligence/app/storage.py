@@ -86,6 +86,10 @@ class PosRow(Base):
 class Repository:
     def __init__(self, database_url: Optional[str] = None):
         url = database_url or get_settings().DATABASE_URL
+        # Render (and Heroku) hand out the legacy 'postgres://' scheme, which
+        # SQLAlchemy 2.0 no longer accepts — normalise to 'postgresql://'.
+        if url.startswith("postgres://"):
+            url = "postgresql://" + url[len("postgres://"):]
         connect_args = {"check_same_thread": False} if url.startswith("sqlite") else {}
         # pool_pre_ping lets us notice a dropped Postgres connection and fail fast.
         self.engine = create_engine(url, connect_args=connect_args, pool_pre_ping=True)
